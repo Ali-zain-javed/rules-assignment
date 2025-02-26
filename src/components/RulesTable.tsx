@@ -73,7 +73,7 @@ const DraggableRow: React.FC<{
     return (
       <tr
         ref={ref}
-        className="border"
+        className="border cursor-move"
         style={{ opacity: isDragging ? 0.5 : 1 }}>
         <td className="border-b p-1 w-6">
           <IconComponent
