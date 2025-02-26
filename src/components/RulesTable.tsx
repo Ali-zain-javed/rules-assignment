@@ -1,4 +1,10 @@
-import React, { useState, ComponentType, useCallback, useMemo } from "react";
+import React, {
+  useState,
+  ComponentType,
+  useCallback,
+  useMemo,
+  memo,
+} from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../redux/store";
 import {
@@ -18,6 +24,8 @@ import { MdDelete } from "react-icons/md";
 import { Rule } from "../redux/rulesSlice";
 import { FaCheck } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
+import { toast } from "react-toastify";
+
 const ItemType = "RULE";
 
 interface RulesTableProps {}
@@ -30,84 +38,91 @@ const DraggableRow: React.FC<{
   isEditing: boolean;
   setEditRule: (rule: Rule) => void;
   selectedRule: Rule | null;
-}> = ({
-  rule,
-  index,
-  moveRule,
-  handleDeleteClick,
-  isEditing,
-  setEditRule,
-  selectedRule,
-}) => {
-  const ref = React.useRef<HTMLTableRowElement>(null);
+}> = memo(
+  ({
+    rule,
+    index,
+    moveRule,
+    handleDeleteClick,
+    isEditing,
+    setEditRule,
+    selectedRule,
+  }) => {
+    const ref = React.useRef<HTMLTableRowElement>(null);
 
-  const [, drop] = useDrop({
-    accept: ItemType,
-    hover: (item: { index: number }) => {
-      if (item.index !== index) {
-        moveRule(item.index, index);
-        item.index = index;
-      }
-    },
-  });
+    const [, drop] = useDrop({
+      accept: ItemType,
+      hover: (item: { index: number }) => {
+        if (item.index !== index) {
+          moveRule(item.index, index);
+          item.index = index;
+        }
+      },
+    });
 
-  const [{ isDragging }, drag] = useDrag({
-    type: ItemType,
-    item: { index },
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
-  });
+    const [{ isDragging }, drag] = useDrag({
+      type: ItemType,
+      item: { index },
+      collect: (monitor) => ({
+        isDragging: monitor.isDragging(),
+      }),
+    });
 
-  if (isEditing) drag(drop(ref));
+    if (isEditing) drag(drop(ref));
 
-  return (
-    <tr ref={ref} className="border" style={{ opacity: isDragging ? 0.5 : 1 }}>
-      <td className="border-b p-1 w-6">
-        <IconComponent
-          icon={RiDraggable as ComponentType<{ size?: number; color?: string }>}
-          size={20}
-          color="black"
-        />
-      </td>
-      <td className="border-b p-1 w-6">{index + 1}</td>
-      <td className="border-b p-2">{rule.measurement}</td>
-      <td className="border-b p-2">{rule.comparator}</td>
-      <td className="border-b p-2">
-        {rule.comparedValue} <span> {"   "}</span> {rule.unitName}
-      </td>
-      <td className="border-b p-2">{rule.findingName}</td>
-      <td className="border-b p-2">Select "{rule.action}"</td>
-      {isEditing && selectedRule?.id !== rule.id && (
-        <td className="border-b p-2">
-          <button className="text-red-500" onClick={() => setEditRule(rule)}>
-            <IconComponent
-              icon={
-                MdOutlineEdit as ComponentType<{
-                  size?: number;
-                  color?: string;
-                }>
-              }
-              size={20}
-              color="black"
-            />
-          </button>
-          <button
-            className="text-red-500 ml-1"
-            onClick={() => handleDeleteClick(rule.id)}>
-            <IconComponent
-              icon={
-                MdDelete as ComponentType<{ size?: number; color?: string }>
-              }
-              size={20}
-              color="black"
-            />
-          </button>
+    return (
+      <tr
+        ref={ref}
+        className="border"
+        style={{ opacity: isDragging ? 0.5 : 1 }}>
+        <td className="border-b p-1 w-6">
+          <IconComponent
+            icon={
+              RiDraggable as ComponentType<{ size?: number; color?: string }>
+            }
+            size={20}
+            color="black"
+          />
         </td>
-      )}
-    </tr>
-  );
-};
+        <td className="border-b p-1 w-6">{index + 1}</td>
+        <td className="border-b p-2">{rule.measurement}</td>
+        <td className="border-b p-2">{rule.comparator}</td>
+        <td className="border-b p-2">
+          {rule.comparedValue} <span> {"   "}</span> {rule.unitName}
+        </td>
+        <td className="border-b p-2">{rule.findingName}</td>
+        <td className="border-b p-2">Select "{rule.action}"</td>
+        {isEditing && selectedRule?.id !== rule.id && (
+          <td className="border-b p-2">
+            <button className="text-red-500" onClick={() => setEditRule(rule)}>
+              <IconComponent
+                icon={
+                  MdOutlineEdit as ComponentType<{
+                    size?: number;
+                    color?: string;
+                  }>
+                }
+                size={20}
+                color="black"
+              />
+            </button>
+            <button
+              className="text-red-500 ml-1"
+              onClick={() => handleDeleteClick(rule.id)}>
+              <IconComponent
+                icon={
+                  MdDelete as ComponentType<{ size?: number; color?: string }>
+                }
+                size={20}
+                color="black"
+              />
+            </button>
+          </td>
+        )}
+      </tr>
+    );
+  }
+);
 
 const RulesTable: React.FC<RulesTableProps> = () => {
   const dispatch = useDispatch();
@@ -133,6 +148,7 @@ const RulesTable: React.FC<RulesTableProps> = () => {
       setRuleToDelete(null);
     }
     setDeleteModalOpen(false);
+    toast.info("Rule Deleted Successfully");
   }, [dispatch, ruleToDelete]);
 
   // "move position rule in ruleset"
@@ -157,12 +173,67 @@ const RulesTable: React.FC<RulesTableProps> = () => {
       dispatch(updateRule({ ...selectedRule }));
       dispatch(selectRule(null));
     }
+    toast.success("Rule Updated Successfully");
   }, [dispatch, selectedRule]);
 
   // "cancel edit rule"
   const cancelEditRule = useCallback(() => {
     dispatch(selectRule(null));
   }, [dispatch]);
+
+  // "change measurement name ,action call for edit rule"
+  const handleMeasurementChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (selectedRule)
+        dispatch(editRule({ ...selectedRule, measurement: e.target.value }));
+    },
+    [dispatch, selectedRule]
+  );
+
+  // "change comparator name ,onChnage action call for edit rule"
+  const handleComparatorChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      if (selectedRule)
+        dispatch(editRule({ ...selectedRule, comparator: e.target.value }));
+    },
+    [dispatch, selectedRule]
+  );
+
+  // "change compared value name ,onChnage action call for edit rule"
+  const handleComparedValueChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (selectedRule)
+        dispatch(editRule({ ...selectedRule, comparedValue: e.target.value }));
+    },
+    [dispatch, selectedRule]
+  );
+
+  // "change finding name ,onChnage action call for edit rule"
+  const handleFindingNameChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (selectedRule)
+        dispatch(editRule({ ...selectedRule, findingName: e.target.value }));
+    },
+    [dispatch, selectedRule]
+  );
+
+  // "change unit name ,onChnage action call for edit rule"
+  const handleUnitNameChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      if (selectedRule)
+        dispatch(editRule({ ...selectedRule, unitName: e.target.value }));
+    },
+    [dispatch, selectedRule]
+  );
+
+  // "Change action name ,onChnage action call for edit rule"
+  const handleActionChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      if (selectedRule)
+        dispatch(editRule({ ...selectedRule, action: e.target.value }));
+    },
+    [dispatch, selectedRule]
+  );
 
   const rules = useMemo(() => ruleset?.rules || [], [ruleset]);
   return (
@@ -219,14 +290,7 @@ const RulesTable: React.FC<RulesTableProps> = () => {
                         className="border p-2 rounded shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         placeholder="Enter Measurement Name"
                         value={selectedRule.measurement}
-                        onChange={(e) => {
-                          dispatch(
-                            editRule({
-                              ...selectedRule,
-                              measurement: e.target.value,
-                            })
-                          );
-                        }}
+                        onChange={handleMeasurementChange}
                       />
                     </div>
                   </td>
@@ -235,14 +299,7 @@ const RulesTable: React.FC<RulesTableProps> = () => {
                       <select
                         className="border p-2 block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
                         value={selectedRule.comparator}
-                        onChange={(e) =>
-                          dispatch(
-                            editRule({
-                              ...selectedRule,
-                              comparator: e.target.value,
-                            })
-                          )
-                        }>
+                        onChange={handleComparatorChange}>
                         <option value="is">is</option>
                         <option value=">=">{">="}</option>
                         <option value="<">{"<"}</option>
@@ -266,28 +323,15 @@ const RulesTable: React.FC<RulesTableProps> = () => {
                         }
                         className="border p-2 rounded shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         value={selectedRule.comparedValue}
-                        onChange={(e) =>
-                          dispatch(
-                            editRule({
-                              ...selectedRule,
-                              comparedValue: e.target.value,
-                            })
-                          )
-                        }
+                        onChange={handleComparedValueChange}
+                        placeholder="Enter Compared Value"
                       />
                       {selectedRule.comparator != "is" && (
                         <div className="inline-block relative w-48 ">
                           <select
                             className="border p-2 block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
                             value={selectedRule.unitName}
-                            onChange={(e) =>
-                              dispatch(
-                                editRule({
-                                  ...selectedRule,
-                                  unitName: e.target.value,
-                                })
-                              )
-                            }>
+                            onChange={handleUnitNameChange}>
                             <option value="">Unit</option>
                             <option value="ms">ms</option>
                           </select>
@@ -309,14 +353,7 @@ const RulesTable: React.FC<RulesTableProps> = () => {
                         type="text"
                         className="border p-2 rounded shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         value={selectedRule.findingName}
-                        onChange={(e) =>
-                          dispatch(
-                            editRule({
-                              ...selectedRule,
-                              findingName: e.target.value,
-                            })
-                          )
-                        }
+                        onChange={handleFindingNameChange}
                         placeholder="Enter Finding Name"
                       />
                     </div>
@@ -326,14 +363,7 @@ const RulesTable: React.FC<RulesTableProps> = () => {
                       <select
                         className="border p-2 block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
                         value={selectedRule.action}
-                        onChange={(e) =>
-                          dispatch(
-                            editRule({
-                              ...selectedRule,
-                              action: e.target.value,
-                            })
-                          )
-                        }>
+                        onChange={handleActionChange}>
                         <option value="Normal">Normal</option>
                         <option value="Reflux">Reflux</option>
                       </select>

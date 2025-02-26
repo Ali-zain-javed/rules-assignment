@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../redux/store";
 import { selectRuleset, addNewRuleset } from "../redux/rulesSlice";
 import { Ruleset } from "../redux/rulesSlice";
+import { toast } from "react-toastify";
 
 const RulesetDropdown: React.FC = () => {
   const dispatch = useDispatch();
@@ -21,6 +22,7 @@ const RulesetDropdown: React.FC = () => {
     };
 
     dispatch(addNewRuleset(ruleSet));
+    toast.success("New Ruleset Added Successfully");
   };
 
   // Watch for rulesets update and select the new ruleset

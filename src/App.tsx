@@ -1,5 +1,4 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
+import React, { lazy, Suspense } from "react";
 import { Provider } from "react-redux";
 import { store } from "./redux/store";
 import {
@@ -8,9 +7,11 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import RulesPage from "./pages/RulesPage";
+
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+
+const RulesPage = lazy(() => import("./pages/RulesPage"));
 
 function App() {
   return (
@@ -19,7 +20,14 @@ function App() {
         <Router>
           <Routes>
             <Route path="/" element={<Navigate to="/rules" replace />} />
-            <Route path="/rules" element={<RulesPage />} />
+            <Route
+              path="/rules"
+              element={
+                <Suspense fallback={<div>Loading...</div>}>
+                  <RulesPage />
+                </Suspense>
+              }
+            />
           </Routes>
         </Router>
       </DndProvider>
