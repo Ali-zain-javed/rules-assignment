@@ -25,8 +25,6 @@ const RulesPage: React.FC = () => {
   const [deleteRuleSetModal, setDeleteRuleSetModalOpen] = React.useState(false);
   const dispatch = useDispatch();
   const selectedRuleSet = useSelector((state: RootState) => state.rules.selectedRuleset);
-
-  const rulesets = useSelector((state: RootState) => state.rules.rulesets);
   const isEditing = useSelector((state: RootState) => state.rules.isEditing);
 
   const confirmCancel = () => {

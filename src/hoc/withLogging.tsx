@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-type ComponentType<P = {}> = React.ComponentType<P>;
+type ComponentType<P = object> = React.ComponentType<P>;
 
 // Higher-Order Component (HOC) for logging
 function withLogging<P extends object>(WrappedComponent: ComponentType<P>) {

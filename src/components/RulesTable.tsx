@@ -1,14 +1,7 @@
 import React, { useState, ComponentType, useCallback, useMemo, memo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../redux/store';
-import {
-  addRule,
-  deleteRule,
-  reorderRules,
-  selectRule,
-  editRule,
-  updateRule,
-} from '../redux/rulesSlice';
+import { deleteRule, reorderRules, selectRule, editRule, updateRule } from '../redux/rulesSlice';
 import ConfirmDeleteModal from './ConfirmationModal';
 import { useDrag, useDrop } from 'react-dnd';
 import { RiDraggable } from 'react-icons/ri';
@@ -21,11 +14,9 @@ import { RxCross2 } from 'react-icons/rx';
 import { toast } from 'react-toastify';
 
 const ItemType = 'RULE';
-
-interface RulesTableProps {}
-
+/* eslint-disable react/prop-types */
 const DraggableRow: React.FC<{
-  rule: any;
+  rule: Rule;
   index: number;
   moveRule: (dragIndex: number, hoverIndex: number) => void;
   handleDeleteClick: (ruleId: number) => void;
@@ -71,7 +62,7 @@ const DraggableRow: React.FC<{
         {rule.comparedValue} <span> {'   '}</span> {rule.unitName}
       </td>
       <td className="border-b p-2">{rule.findingName}</td>
-      <td className="border-b p-2">Select "{rule.action}"</td>
+      <td className="border-b p-2">Select {`"${rule.action}"`}</td>
       {isEditing && selectedRule?.id !== rule.id && (
         <td className="border-b p-2">
           <button className="text-red-500" onClick={() => setEditRule(rule)}>
@@ -99,7 +90,9 @@ const DraggableRow: React.FC<{
   );
 });
 
-const RulesTable: React.FC<RulesTableProps> = () => {
+DraggableRow.displayName = 'DraggableRow';
+
+const RulesTable: React.FC = () => {
   const dispatch = useDispatch();
   const ruleset = useSelector((state: RootState) => state.rules.selectedRuleset);
   const selectedRule = useSelector((state: RootState) => state.rules.selectedRule);
