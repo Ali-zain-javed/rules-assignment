@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 interface ConfirmDeleteModalProps {
   isOpen: boolean;
@@ -6,7 +6,7 @@ interface ConfirmDeleteModalProps {
   onConfirm: () => void;
   title?: string;
   message?: string;
-  type?: "cancel" | "delete";
+  type?: 'cancel' | 'delete';
 }
 
 const ConfirmModal: React.FC<ConfirmDeleteModalProps> = ({
@@ -14,7 +14,7 @@ const ConfirmModal: React.FC<ConfirmDeleteModalProps> = ({
   onClose,
   onConfirm,
   message,
-  type = "delete",
+  type = 'delete',
 }) => {
   if (!isOpen) return null;
 
@@ -28,10 +28,11 @@ const ConfirmModal: React.FC<ConfirmDeleteModalProps> = ({
           </button>
           <button
             className={`${
-              type == "delete" ? "bg-red-500" : "bg-gray-500"
+              type == 'delete' ? 'bg-red-500' : 'bg-gray-500'
             } text-white px-4 py-2 rounded`}
-            onClick={onConfirm}>
-            {type == "delete" ? "Delete" : "Confirm"}
+            onClick={onConfirm}
+          >
+            {type == 'delete' ? 'Delete' : 'Confirm'}
           </button>
         </div>
       </div>

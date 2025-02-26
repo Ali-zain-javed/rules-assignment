@@ -1,5 +1,5 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { mockData } from "../utils";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { mockData } from '../utils';
 
 export interface Rule {
   id: number;
@@ -36,7 +36,7 @@ const initialState: RulesState = {
 };
 
 const rulesSlice = createSlice({
-  name: "rules",
+  name: 'rules',
   initialState,
   reducers: {
     addNewRuleset: (state, action: PayloadAction<Ruleset>) => {
@@ -85,19 +85,15 @@ const rulesSlice = createSlice({
       }
     },
     saveRuleset: (state) => {
-      const index = state.rulesets.findIndex(
-        (ruleset) => ruleset.id === state.selectedRuleset?.id
-      );
+      const index = state.rulesets.findIndex((ruleset) => ruleset.id === state.selectedRuleset?.id);
       if (index !== -1 && state.selectedRuleset) {
         state.rulesets[index] = state.selectedRuleset;
       }
     },
     cancelRuleset: (state) => {
       // Reset the selected ruleset to the original state
-      const index = state.rulesets.findIndex(
-        (ruleset) => ruleset.id === state.selectedRuleset?.id
-      );
-      console.log("state.rulesets[index];", state.rulesets[index]);
+      const index = state.rulesets.findIndex((ruleset) => ruleset.id === state.selectedRuleset?.id);
+      console.log('state.rulesets[index];', state.rulesets[index]);
       if (index !== -1) {
         state.selectedRuleset = state.rulesets[index];
       }
@@ -118,24 +114,12 @@ const rulesSlice = createSlice({
       }
     },
     deleteRuleset: (state, action: PayloadAction<number>) => {
-      state.rulesets = state.rulesets.filter(
-        (ruleset) => ruleset.id !== action.payload
-      );
+      state.rulesets = state.rulesets.filter((ruleset) => ruleset.id !== action.payload);
     },
-    reorderRules: (
-      state,
-      action: PayloadAction<{ dragIndex: number; hoverIndex: number }>
-    ) => {
+    reorderRules: (state, action: PayloadAction<{ dragIndex: number; hoverIndex: number }>) => {
       if (state.selectedRuleset) {
-        const [movedRule] = state.selectedRuleset.rules.splice(
-          action.payload.dragIndex,
-          1
-        );
-        state.selectedRuleset.rules.splice(
-          action.payload.hoverIndex,
-          0,
-          movedRule
-        );
+        const [movedRule] = state.selectedRuleset.rules.splice(action.payload.dragIndex, 1);
+        state.selectedRuleset.rules.splice(action.payload.hoverIndex, 0, movedRule);
       }
     },
   },

@@ -1,4 +1,4 @@
-import React, { ComponentType } from "react";
+import React, { ComponentType } from 'react';
 
 interface IconProps {
   icon: ComponentType<{ size?: number; color?: string }>;
@@ -6,11 +6,7 @@ interface IconProps {
   color?: string;
 }
 
-const IconComponent: React.FC<IconProps> = ({
-  icon: Icon,
-  size = 24,
-  color = "black",
-}) => {
+const IconComponent: React.FC<IconProps> = ({ icon: Icon, size = 24, color = 'black' }) => {
   return <Icon size={size} color={color} />;
 };
 

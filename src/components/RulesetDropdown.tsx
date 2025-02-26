@@ -1,28 +1,26 @@
-import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../redux/store";
-import { selectRuleset, addNewRuleset } from "../redux/rulesSlice";
-import { Ruleset } from "../redux/rulesSlice";
-import { toast } from "react-toastify";
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../redux/store';
+import { selectRuleset, addNewRuleset } from '../redux/rulesSlice';
+import { Ruleset } from '../redux/rulesSlice';
+import { toast } from 'react-toastify';
 
 const RulesetDropdown: React.FC = () => {
   const dispatch = useDispatch();
 
   const rulesets = useSelector((state: RootState) => state.rules.rulesets);
-  const selectedRuleset = useSelector(
-    (state: RootState) => state.rules.selectedRuleset
-  );
+  const selectedRuleset = useSelector((state: RootState) => state.rules.selectedRuleset);
 
   //for adding new ruleset, action creator
   const addNewRulesetAction = () => {
     const ruleSet: Ruleset = {
       id: rulesets.length + 1,
-      name: "New Ruleset",
+      name: 'New Ruleset',
       rules: [],
     };
 
     dispatch(addNewRuleset(ruleSet));
-    toast.success("New Ruleset Added Successfully");
+    toast.success('New Ruleset Added Successfully');
   };
 
   // Watch for rulesets update and select the new ruleset
@@ -35,20 +33,18 @@ const RulesetDropdown: React.FC = () => {
 
   //on change event for ruleset dropdown
   const onChangeRuleSet = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    if (e.target.value === "new") {
+    if (e.target.value === 'new') {
       addNewRulesetAction();
     }
     //load the selected ruleset on base id
-    const selectedRuleset = rulesets.find(
-      (r) => r.id === Number(e.target.value)
-    );
+    const selectedRuleset = rulesets.find((r) => r.id === Number(e.target.value));
 
     dispatch(
       selectRuleset({
         ...selectedRuleset,
         rules: selectedRuleset?.rules ?? [],
         id: selectedRuleset?.id ?? 0,
-        name: selectedRuleset?.name ?? "",
+        name: selectedRuleset?.name ?? '',
       })
     );
   };
@@ -57,7 +53,8 @@ const RulesetDropdown: React.FC = () => {
     <select
       className="border p-2 w-full my-2"
       onChange={(e) => onChangeRuleSet(e)}
-      value={selectedRuleset?.id ?? ""}>
+      value={selectedRuleset?.id ?? ''}
+    >
       {rulesets.map((r) => (
         <option key={r.id} value={r.id}>
           {r.name}

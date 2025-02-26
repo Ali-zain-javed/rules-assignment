@@ -1,6 +1,6 @@
-import React, { Component, ErrorInfo, ReactNode, ComponentType } from "react";
-import { MdOutlineReportProblem } from "react-icons/md";
-import IconComponent from "./IconComponent";
+import React, { Component, ErrorInfo, ReactNode, ComponentType } from 'react';
+import { MdOutlineReportProblem } from 'react-icons/md';
+import IconComponent from './IconComponent';
 interface ErrorBoundaryProps {
   children: ReactNode;
 }
@@ -17,7 +17,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
-    console.error("ErrorBoundary caught an error", error, info);
+    console.error('ErrorBoundary caught an error', error, info);
   }
 
   render() {
@@ -31,7 +31,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
                 color?: string;
               }>
             }
-          />{" "}
+          />{' '}
           <span>Something went wrong.</span>
         </div>
       );

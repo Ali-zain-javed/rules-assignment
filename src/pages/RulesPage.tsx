@@ -1,6 +1,6 @@
-import React, { useCallback } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../redux/store";
+import React, { useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../redux/store';
 import {
   toggleEditMode,
   addRule,
@@ -10,20 +10,21 @@ import {
   selectRule,
   copyRuleset,
   deleteRuleset,
-} from "../redux/rulesSlice";
-import RulesTable from "../components/RulesTable";
-import RulesetDropdown from "../components/RulesetDropdown";
-import ConfirmModal from "../components/ConfirmationModal";
-import ErrorBoundary from "../components/ErrorBoundary";
-import { ToastContainer, toast } from "react-toastify";
+} from '../redux/rulesSlice';
+import RulesTable from '../components/RulesTable';
+import RulesetDropdown from '../components/RulesetDropdown';
+import ConfirmModal from '../components/ConfirmationModal';
+import ErrorBoundary from '../components/ErrorBoundary';
+import { ToastContainer, toast } from 'react-toastify';
+import withLogging from '../hoc/withLogging';
+
+const EnhancedRulesTable = withLogging(RulesTable);
 
 const RulesPage: React.FC = () => {
   const [cancelModalOpen, setCancelModalOpen] = React.useState(false);
   const [deleteRuleSetModal, setDeleteRuleSetModalOpen] = React.useState(false);
   const dispatch = useDispatch();
-  const selectedRuleSet = useSelector(
-    (state: RootState) => state.rules.selectedRuleset
-  );
+  const selectedRuleSet = useSelector((state: RootState) => state.rules.selectedRuleset);
 
   const rulesets = useSelector((state: RootState) => state.rules.rulesets);
   const isEditing = useSelector((state: RootState) => state.rules.isEditing);
@@ -44,7 +45,7 @@ const RulesPage: React.FC = () => {
     dispatch(toggleEditMode());
     dispatch(selectRule(null));
     setDeleteRuleSetModalOpen(false);
-    toast.info("Ruleset Deleted Successfully");
+    toast.info('Ruleset Deleted Successfully');
   };
 
   // delete ruleset method, action call in which selected ruleset is deleted
@@ -56,7 +57,7 @@ const RulesPage: React.FC = () => {
   const confirmCopy = () => {
     dispatch(copyRuleset());
     setDeleteRuleSetModalOpen(false);
-    toast.success("Ruleset Copied Successfully");
+    toast.success('Ruleset Copied Successfully');
   };
 
   // save ruleset method, action call in which selected ruleset is saved
@@ -64,7 +65,7 @@ const RulesPage: React.FC = () => {
     dispatch(saveRuleset());
     dispatch(toggleEditMode());
     dispatch(selectRule(null));
-    toast.success("Ruleset Saved Successfully");
+    toast.success('Ruleset Saved Successfully');
   };
 
   // "on change event for ruleset name change"
@@ -89,7 +90,7 @@ const RulesPage: React.FC = () => {
       <ToastContainer />
       <div className=" text-2xl p-4 p-4 m-4">
         <h1 className="text-4xl font-bold mb-2">
-          Ruleset -{isEditing ? " Edit Mode" : " View Mode"}
+          Ruleset -{isEditing ? ' Edit Mode' : ' View Mode'}
         </h1>
         <div className="flex  gap-4">
           <div className="w-1/2">
@@ -108,28 +109,29 @@ const RulesPage: React.FC = () => {
             {isEditing && (
               <button
                 className="bg-blue-500 text-white px-2 py-1 rounded"
-                onClick={saveRulesetMethod}>
+                onClick={saveRulesetMethod}
+              >
                 Save Changes
               </button>
             )}
             {!isEditing && (
               <button
                 className="bg-gray-300 text-black px-2 py-1 rounded"
-                onClick={() => dispatch(toggleEditMode())}>
+                onClick={() => dispatch(toggleEditMode())}
+              >
                 Edit Rules
               </button>
             )}
             {!isEditing && (
-              <button
-                className="bg-blue-500 text-white px-2 py-1 rounded"
-                onClick={confirmCopy}>
+              <button className="bg-blue-500 text-white px-2 py-1 rounded" onClick={confirmCopy}>
                 Copy Ruleset
               </button>
             )}
             {isEditing && (
               <button
                 className="bg-gray-300 text-black px-2 py-1 rounded"
-                onClick={() => openCancelModal()}>
+                onClick={() => openCancelModal()}
+              >
                 Cancel
               </button>
             )}
@@ -140,28 +142,27 @@ const RulesPage: React.FC = () => {
                   dispatch(
                     addRule({
                       id: Date.now(),
-                      unitName: "",
-                      findingName: "",
-                      comparator: "is",
-                      measurement: "",
-                      comparedValue: "Not Present",
-                      action: "Normal",
+                      unitName: '',
+                      findingName: '',
+                      comparator: 'is',
+                      measurement: '',
+                      comparedValue: 'Not Present',
+                      action: 'Normal',
                     })
                   )
-                }>
+                }
+              >
                 Add New Rule
               </button>
             )}
             {isEditing && (
-              <button
-                className="bg-red-500 text-white px-2 py-1 rounded"
-                onClick={openDeleteModal}>
+              <button className="bg-red-500 text-white px-2 py-1 rounded" onClick={openDeleteModal}>
                 Delete Ruleset
               </button>
             )}
           </div>
         </div>
-        {selectedRuleSet && <RulesTable />}
+        {selectedRuleSet && <EnhancedRulesTable />}
         <ConfirmModal
           isOpen={cancelModalOpen}
           onClose={() => setCancelModalOpen(false)}
