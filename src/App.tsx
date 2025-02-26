@@ -2,7 +2,12 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
 import { store } from "./redux/store";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import RulesPage from "./pages/RulesPage";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -13,6 +18,7 @@ function App() {
       <DndProvider backend={HTML5Backend}>
         <Router>
           <Routes>
+            <Route path="/" element={<Navigate to="/rules" replace />} />
             <Route path="/rules" element={<RulesPage />} />
           </Routes>
         </Router>
